@@ -3,3 +3,5 @@ dataset/frame_index.csv
 
 # ignore all models:
 *.pth
+# BUT keep the best model (the latest everytime)
+!best_model.pth

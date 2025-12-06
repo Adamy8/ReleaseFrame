@@ -1,0 +1,8 @@
+Currently, I have this file train_cnn.py, which trains a 2D CNN model
+
+Next step could be adding a GRU layer or LSTM layer (RNN) for 3D (videos)
+or TCN
+
+Plan: temporal CNN
+1. Create a new file named `train_video_cnn_gru.py` that adds a GRU on top of CNN features.
+2. 'LSTM'

@@ -6,9 +6,15 @@ import argparse
 from pathlib import Path
 
 import cv2
+import numpy as np
 import torch
 from torchvision import models, transforms
 from PIL import Image
+
+# logic: The release frame = the FIRST frame where probability exceeds a threshold and stays above it for K frames.
+
+RELEASE_THRESHOLD = 0.8  # between 0.0 and 1.0
+RELEASE_MIN_FRAMES = 5   # K; number of consecutive frames that must stay above threshold
 
 
 def build_model(weights_path: Path, device: torch.device) -> torch.nn.Module:
@@ -28,13 +34,73 @@ def preprocess_frame(frame_bgr, transform):
     return transform(pil_img).unsqueeze(0)
 
 
+def compute_probabilities(
+    video_path: Path, model: torch.nn.Module, device: torch.device, transform
+) -> list[float]:
+    cap = cv2.VideoCapture(str(video_path))
+    if not cap.isOpened():
+        raise RuntimeError(f"Could not open video: {video_path}")
+
+    probs: list[float] = []
+    with torch.no_grad():
+        while True:
+            ok, frame = cap.read()
+            if not ok:
+                break
+
+            tensor = preprocess_frame(frame, transform).to(device)
+            logit = model(tensor).squeeze(1)
+            prob = torch.sigmoid(logit)[0].item()
+            probs.append(prob)
+
+    cap.release()
+    return probs
+
+
+def choose_release_frame(probs: list[float], threshold: float, min_frames: int) -> int:
+    """
+    Pick the earliest frame whose probability crosses `threshold` and stays above it
+    for `min_frames` consecutive frames. Falls back to the max if none satisfy.
+    """
+    if not probs:
+        raise RuntimeError("No probabilities to choose from.")
+
+    arr = np.array(probs, dtype=np.float32)
+    max_prob = float(arr.max())
+    window = max(1, min_frames)
+
+    for i in range(arr.size):
+        if arr[i] >= threshold:
+            end_idx = min(i + window, arr.size)
+            if np.all(arr[i:end_idx] >= threshold):
+                return int(i)
+
+    max_indices = np.flatnonzero(arr >= max_prob - 1e-6)
+    return int(max_indices[0])
+
+
 def predict_video(video_path: Path, model_path: Path) -> None:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = build_model(model_path, device)
 
+    transform = transforms.Compose(
+        [
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
+
+    probs = compute_probabilities(video_path, model, device, transform)
+    if not probs:
+        raise RuntimeError("No frames found in video.")
+
+    release_frame_idx = choose_release_frame(probs, threshold=RELEASE_THRESHOLD, min_frames=RELEASE_MIN_FRAMES)
+    raw_prob_at_release = probs[release_frame_idx]
+
     cap = cv2.VideoCapture(str(video_path))
     if not cap.isOpened():
-        raise RuntimeError(f"Could not open video: {video_path}")
+        raise RuntimeError(f"Could not open video for annotation: {video_path}")
 
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -48,50 +114,47 @@ def predict_video(video_path: Path, model_path: Path) -> None:
         (width, height),
     )
 
-    transform = transforms.Compose(
-        [
-            transforms.Resize((224, 224)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ]
-    )
-
-    best_prob = -1.0
-    best_frame_idx = -1
     frame_idx = 0
+    while True:
+        ok, frame = cap.read()
+        if not ok:
+            break
 
-    with torch.no_grad():
-        while True:
-            ok, frame = cap.read()
-            if not ok:
-                break
+        text = f"Prob: {probs[frame_idx]:.3f}"
+        cv2.putText(
+            frame,
+            text,
+            (10, 30),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.0,
+            (0, 255, 0),
+            2,
+            cv2.LINE_AA,
+        )
 
-            tensor = preprocess_frame(frame, transform).to(device)
-            logit = model(tensor).squeeze(1)
-            prob = torch.sigmoid(logit)[0].item()
-
-            if prob > best_prob:
-                best_prob = prob
-                best_frame_idx = frame_idx
-
-            text = f"Prob: {prob:.3f}"
+        if frame_idx == release_frame_idx:
+            cv2.rectangle(frame, (5, 5), (width - 5, height - 5), (0, 255, 0), 6)
             cv2.putText(
                 frame,
-                text,
-                (10, 30),
+                "Release frame",
+                (10, 70),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 1.0,
                 (0, 255, 0),
                 2,
                 cv2.LINE_AA,
             )
-            writer.write(frame)
-            frame_idx += 1
+
+        writer.write(frame)
+        frame_idx += 1
 
     cap.release()
     writer.release()
 
-    print(f"Predicted release frame: {best_frame_idx} (prob={best_prob:.3f})")
+    print(
+        f"Predicted release frame: {release_frame_idx} "
+        f"(raw_prob={raw_prob_at_release:.3f})"
+    )
     print(f"Annotated video saved to: {out_path}")
 
 

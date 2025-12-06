@@ -1,1 +1,5 @@
 .DS_Store
+dataset/frame_index.csv
+
+# ignore all models:
+*.pth

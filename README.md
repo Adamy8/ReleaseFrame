@@ -1,1 +1,20 @@
 # ReleaseFrame
+
+## Roadmap
+- Workflow
+  - (0. use python venv, pip install -r requirements.txt)
+  - 1. Download the annotations/ folder from Google drive.
+  - 2. python processdata.py rename     # to change name into readable video###.mp4
+  - 3. python processdata.py build-dataset    # to put data into the structure for CNN train_video_cnn_gru
+  - 4. python train_cnn.py --dataset dataset --epochs 5 --batch-size 32 --lr 1e-4      # train the 2D CNN
+  - 5. python predit_release.py --video path/to/input.mp4    # to use the model
+
+- Plan
+  - Currently, I have this file train_cnn.py, which trains a 2D CNN model
+  - Next step could be adding a GRU layer or LSTM layer (RNN) for 3D (videos) or TCN. The 3D one would require a lot more data.
+  - Plan: temporal CNN
+    - Create a new file named `train_video_cnn_gru.py` that adds a GRU on top of CNN features.
+    - 'LSTM'
+
+## Samples
+- `annotated_dodgers.mp4`: example annotated output video.

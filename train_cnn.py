@@ -1,4 +1,4 @@
-# How to run:
+# To run:
 # python train_cnn.py --dataset dataset --epochs 5 --batch-size 32 --lr 1e-4
 # If you already have a frame index CSV: add --index-csv path/to/frame_index.csv.
 # Outputs release_cnn.pth in the working directory (configurable via --save-path).

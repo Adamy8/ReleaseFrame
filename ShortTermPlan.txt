@@ -1,0 +1,75 @@
+Change the dataset:
+Frame	    Label
+before      0.0
+2 before	0.3
+1 before	0.6
+Release	    ✅ 1.0
+After	    1.0
+Reason: regression models learn boundaries better when the true event is the maximum.
+
+Model setup:
+    ✅ Use: ResNet18 (pretrained on ImageNet)
+    ✅ Head: 2-layer regression head
+    ResNet18 Backbone (frozen first)
+            ↓
+    Linear(512 → 128)
+    ReLU
+    Linear(128 → 1)   → output ∈ [0, 1+]
+Loss Function:
+    SmoothL1Loss (Huber)
+
+
+!!Training Strategy:
+    Because your dataset is small: train 15-25 epochs
+
+    ✅ Phase 1 — Freeze backbone
+    for param in model.parameters():
+        param.requires_grad = False
+    for param in model.fc.parameters():
+        param.requires_grad = True
+
+    Train for:
+    ✅ 10–15 epochs
+
+    ✅ Phase 2 — Fine-tune last ResNet block only
+    Unfreeze:
+    for name, param in model.named_parameters():
+        if "layer4" in name or "fc" in name:
+            param.requires_grad = True
+
+    Train for:
+    ✅ 5–10 more epochs
+    ✅ LR = 1e-5
+
+ANNOTATE 120-150 videos: then 30-45 epochs
+
+
+Current Proble: Jilter
+
+
+Real Temporal: LSTM/GRU, but require way more annotations. 300-600 videos (250videos*210frames minimal)
+core difference:
+    With memory, the model learns:
+    ✅ Velocity
+    ✅ Acceleration
+    ✅ Arm trajectory
+    ✅ Subtle timing buildup
+    ✅ Frame-to-frame dependency
+
+
+Way Future:
+    ✅ If You Want to Go One Level More Advanced (Optional)
+    Instead of a step-ramp, you can use a Gaussian bump:
+    y(t) = exp( - (t - R)² / (2σ²) )
+
+    With σ = 1.0 or 1.5 frames, this gives:
+    ... 0.01  0.14  0.61  1.0  0.61  0.14  0.01 ...
+
+    This is:
+    ✅ Mathematically smooth
+    ✅ Symmetric
+    ✅ Amazing for temporal localization
+    But:
+    ❌ More complex to reason about
+    ❌ Harder to debug early on
+    For now: stick with the short ramp.

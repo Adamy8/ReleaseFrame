@@ -44,7 +44,8 @@ Loss Function:
 ANNOTATE 120-150 videos: then 30-45 epochs
 
 
-Current Proble: Jilter
+Current Proble: +-1 frame jitter
+Solution:   need to search up... ask GPT
 
 
 Real Temporal: LSTM/GRU, but require way more annotations. 300-600 videos (250videos*210frames minimal)

@@ -17,3 +17,11 @@ But the 3D one would require a lot more data.
 Plan: temporal CNN
 1. Create a new file named `train_video_cnn_gru.py` that adds a GRU on top of CNN features.
 2. 'LSTM'
+
+
+| Model      | Temporal Modeling | Speed  | Data Needs | Stability | Your Case    |
+| ---------- | ----------------- | ------ | ---------- | --------- | ------------ |
+| CNN + GRU  | Explicit memory   | Medium | Medium     | Good      | Good         |
+| CNN + LSTM | Strong memory     | Slow   | Medium+    | Very good | Overkill     |
+| CNN + TCN  | Local motion      | Fast   | Low–Medium | Excellent | **Best fit** |
+| 3D CNN     | Implicit          | Slow   | High       | Medium    | ❌ (for now)  |

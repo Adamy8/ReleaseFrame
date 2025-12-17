@@ -107,9 +107,9 @@ def generate_labels(num_frames: int, release_frame: int) -> np.ndarray:
     if rf - 2 >= 0:
         labels[rf - 2] = 0.3
     if rf - 1 >= 0:
-        labels[rf - 1] = 0.4
+        labels[rf - 1] = 0.6
 
-    labels[rf] = 0.9
+    labels[rf] = 1.0
     if rf + 1 < num_frames:
         labels[rf + 1 :] = 1.0
     return labels

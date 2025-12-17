@@ -375,6 +375,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--freeze-epochs", type=int, default=2, help="Freeze CNN backbone for first N epochs")
     parser.add_argument("--log-interval", type=int, default=20)
     parser.add_argument("--save-path", type=Path, default=Path("release_cnn_tcn.pth"))
+    parser.add_argument("--best-path", type=Path, default=Path("best_release_cnn_tcn.pth"))
+    parser.add_argument("--last-path", type=Path, default=Path("last_release_cnn_tcn.pth"))
     return parser.parse_args()
 
 
@@ -414,43 +416,70 @@ def main() -> None:
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
-    for epoch in range(1, args.epochs + 1):
-        print(f"Epoch {epoch}/{args.epochs} (device={device})")
-        if epoch > args.freeze_epochs:
-            model.unfreeze_backbone()
-        train_one_epoch(
-            model,
-            train_loader,
-            optimizer,
-            criterion,
-            device,
-            use_amp,
-            grad_clip=1.0,
-            log_interval=args.log_interval,
-        )
+    best_score = float("inf")
+    best_saved = False
 
-        if val_ids:
-            val_metrics = evaluate_videos(
+    try:
+        for epoch in range(1, args.epochs + 1):
+            print(f"Epoch {epoch}/{args.epochs} (device={device})")
+            if epoch > args.freeze_epochs:
+                model.unfreeze_backbone()
+            train_one_epoch(
                 model,
-                dataset_root,
-                val_ids,
+                train_loader,
+                optimizer,
+                criterion,
                 device,
-                transform,
-                window=args.window,
-                stride=args.stride,
-                batch_size=args.batch_size,
-            )
-            print(
-                "  Val | "
-                f"mean={val_metrics['mean_error']:.2f} "
-                f"median={val_metrics['median_error']:.2f} "
-                f"±1={val_metrics['within_1']:.2%} "
-                f"±2={val_metrics['within_2']:.2%} "
-                f"±3={val_metrics['within_3']:.2%}"
+                use_amp,
+                grad_clip=1.0,
+                log_interval=args.log_interval,
             )
 
-    torch.save(model.state_dict(), args.save_path)
-    print(f"Saved model to {args.save_path}")
+            if val_ids:
+                val_metrics = evaluate_videos(
+                    model,
+                    dataset_root,
+                    val_ids,
+                    device,
+                    transform,
+                    window=args.window,
+                    stride=args.stride,
+                    batch_size=args.batch_size,
+                )
+                mean_err = val_metrics["mean_error"]
+                print(
+                    "  Val | "
+                    f"mean={val_metrics['mean_error']:.2f} "
+                    f"median={val_metrics['median_error']:.2f} "
+                    f"±1={val_metrics['within_1']:.2%} "
+                    f"±2={val_metrics['within_2']:.2%} "
+                    f"±3={val_metrics['within_3']:.2%}"
+                )
+                if mean_err < best_score:
+                    best_score = mean_err
+                    torch.save(model.state_dict(), args.best_path)
+                    best_saved = True
+                    print(f"  Saved new best checkpoint to {args.best_path}")
+    except KeyboardInterrupt:
+        torch.save(model.state_dict(), args.last_path)
+        print(f"\nTraining interrupted; last checkpoint saved to {args.last_path}")
+        return
+    except Exception:
+        torch.save(model.state_dict(), args.last_path)
+        print(f"\nException during training; last checkpoint saved to {args.last_path}")
+        raise
+
+    # Normal completion: always save last and ensure a best checkpoint exists.
+    torch.save(model.state_dict(), args.last_path)
+    print(f"Saved last checkpoint to {args.last_path}")
+    if not best_saved:
+        torch.save(model.state_dict(), args.best_path)
+        print(f"No validation improvements tracked; saved current model as best to {args.best_path}")
+
+    # Optional legacy save path.
+    if args.save_path:
+        torch.save(model.state_dict(), args.save_path)
+        print(f"Saved model to {args.save_path}")
 
     if test_ids:
         test_metrics = evaluate_videos(

@@ -1,0 +1,7 @@
+Confirm the process is alive: (eg. nohup workID 20119)
+    ps -p 20119 -o pid,etime,cmd
+See if the process is consuming CPU:
+    top -p 20119
+
+
+tail -f train.log

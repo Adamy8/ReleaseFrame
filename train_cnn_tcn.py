@@ -3,6 +3,8 @@
     # python train_cnn_tcn.py --dataset dataset --make-splits --seed 42
 # Train: 
     # python train_cnn_tcn.py --dataset dataset --epochs 25 --batch-size 4 --device cuda
+# Train with no interrupting:
+    # nohup python train_cnn_tcn.py --dataset dataset --epochs 25 --batch-size 4 --device cuda > train.log 2>&1 &
 
 # Inference stats run automatically on val each epoch and on test after training; 
 # adjust --freeze-epochs, --lr, --window, --stride, and --save-path as needed.

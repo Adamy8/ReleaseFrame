@@ -1,3 +1,9 @@
+# To run:
+# python predict_release_tcn.py --video path/to/video.mp4 --model best_release_cnn_tcn.pth
+
+# Optional:
+# --threshold 0.8 --min-frames 5 --window 64 --stride 8 --batch-size 4 --device cuda --output my_out.mp4
+
 from __future__ import annotations
 
 import argparse

@@ -1,5 +1,6 @@
 .DS_Store
-dataset/frame_index.csv
+dataset/
+annotations/
 
 # ignore all models:
 *.pth

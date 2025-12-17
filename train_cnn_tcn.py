@@ -183,7 +183,8 @@ class ReleaseFrameWindowDataset(Dataset):
 class TemporalBlock(nn.Module):
     def __init__(self, in_ch: int, out_ch: int, kernel_size: int, dilation: int, dropout: float) -> None:
         super().__init__()
-        padding = (kernel_size - 1) * dilation
+        # Use "same" padding for odd kernels so temporal length is preserved.
+        padding = ((kernel_size - 1) // 2) * dilation
         self.net = nn.Sequential(
             nn.Conv1d(in_ch, out_ch, kernel_size, padding=padding, dilation=dilation),
             nn.ReLU(),

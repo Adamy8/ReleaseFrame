@@ -1474,3 +1474,65 @@ Epoch 24/25 (device=cuda)
   Val | mean=0.52 median=1.00 ±1=100.00% ±2=100.00% ±3=100.00%
   Bad trackers (>3.0): video_148:3 (err=1.00), video_221:3 (err=1.00), video_093:1 (err=0.00), video_118:1 (err=0.00), video_227:1 (err=0.00)
 Epoch 25/25 (device=cuda)
+  step 00020: loss=0.0214
+  step 00040: loss=0.0045
+  step 00060: loss=0.0068
+  step 00080: loss=0.0099
+  step 00100: loss=0.0071
+  step 00120: loss=0.0084
+  step 00140: loss=0.0087
+  step 00160: loss=0.0085
+  step 00180: loss=0.0072
+  step 00200: loss=0.0074
+  step 00220: loss=0.0091
+  step 00240: loss=0.0083
+  step 00260: loss=0.0089
+  step 00280: loss=0.0087
+  step 00300: loss=0.0074
+  step 00320: loss=0.0086
+  step 00340: loss=0.0094
+  step 00360: loss=0.0078
+  step 00380: loss=0.0142
+  step 00400: loss=0.0084
+  step 00420: loss=0.0072
+  step 00440: loss=0.0073
+  step 00460: loss=0.0074
+  step 00480: loss=0.0068
+  step 00500: loss=0.0093
+  step 00520: loss=0.0083
+  step 00540: loss=0.0073
+  step 00560: loss=0.0098
+  step 00580: loss=0.0093
+  step 00600: loss=0.0098
+  step 00620: loss=0.0098
+  step 00640: loss=0.0070
+  step 00660: loss=0.0070
+  step 00680: loss=0.0096
+  step 00700: loss=0.0069
+  step 00720: loss=0.0093
+  step 00740: loss=0.0085
+  step 00760: loss=0.0074
+  step 00780: loss=0.0073
+  step 00800: loss=0.0089
+  step 00820: loss=0.0073
+  step 00840: loss=0.0100
+  step 00860: loss=0.0089
+  step 00880: loss=0.0087
+  step 00900: loss=0.0083
+  step 00920: loss=0.0083
+  step 00940: loss=0.0082
+  step 00960: loss=0.0075
+  step 00980: loss=0.0100
+  step 01000: loss=0.0074
+  step 01020: loss=0.0091
+  step 01040: loss=0.0074
+  step 01060: loss=0.0093
+  step 01080: loss=0.0078
+  step 01100: loss=0.0092
+  step 01120: loss=0.0070
+  step 01140: loss=0.0069
+  step 01160: loss=0.0075
+  Val | mean=0.14 median=0.00 ±1=100.00% ±2=100.00% ±3=100.00%
+  Bad trackers (>3.0): video_148:3 (err=0.00), video_221:3 (err=0.00), video_093:1 (err=0.00), video_118:1 (err=0.00), video_227:1 (err=0.00)
+Saved last checkpoint to last_release_cnn_tcn.pth
+Test set results | mean=2.10 median=0.00 ±1=96.67% ±2=96.67% ±3=96.67%

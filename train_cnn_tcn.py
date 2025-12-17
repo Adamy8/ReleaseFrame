@@ -295,10 +295,11 @@ def evaluate_videos(
     window: int,
     stride: int,
     batch_size: int,
-) -> dict:
+) -> tuple[dict, dict[str, float]]:
     model.eval()
     all_errors: list[float] = []
     within_1 = within_2 = within_3 = 0
+    per_video_error: dict[str, float] = {}
 
     for video_id in video_ids:
         video_dir = dataset_root / video_id
@@ -338,6 +339,7 @@ def evaluate_videos(
 
         error = abs(pred_release - true_release)
         all_errors.append(error)
+        per_video_error[video_id] = float(error)
         within_1 += int(error <= 1)
         within_2 += int(error <= 2)
         within_3 += int(error <= 3)
@@ -346,14 +348,17 @@ def evaluate_videos(
     median_error = float(np.median(all_errors)) if all_errors else 0.0
     total = len(all_errors) if all_errors else 1
 
-    return {
-        "mean_error": mean_error,
-        "median_error": median_error,
-        "within_1": within_1 / total,
-        "within_2": within_2 / total,
-        "within_3": within_3 / total,
-        "num_videos": total if all_errors else 0,
-    }
+    return (
+        {
+            "mean_error": mean_error,
+            "median_error": median_error,
+            "within_1": within_1 / total,
+            "within_2": within_2 / total,
+            "within_3": within_3 / total,
+            "num_videos": total if all_errors else 0,
+        },
+        per_video_error,
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -374,9 +379,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--split-dir", type=Path, default=Path("splits"))
     parser.add_argument("--freeze-epochs", type=int, default=2, help="Freeze CNN backbone for first N epochs")
     parser.add_argument("--log-interval", type=int, default=20)
-    parser.add_argument("--save-path", type=Path, default=Path("release_cnn_tcn.pth"))
     parser.add_argument("--best-path", type=Path, default=Path("best_release_cnn_tcn.pth"))
     parser.add_argument("--last-path", type=Path, default=Path("last_release_cnn_tcn.pth"))
+    parser.add_argument("--bad-threshold", type=float, default=3.0, help="Frame-error threshold to flag bad videos")
     return parser.parse_args()
 
 
@@ -418,6 +423,7 @@ def main() -> None:
 
     best_score = float("inf")
     best_saved = False
+    bad_counts: dict[str, int] = {}
 
     try:
         for epoch in range(1, args.epochs + 1):
@@ -436,7 +442,7 @@ def main() -> None:
             )
 
             if val_ids:
-                val_metrics = evaluate_videos(
+                val_metrics, video_errors = evaluate_videos(
                     model,
                     dataset_root,
                     val_ids,
@@ -455,6 +461,15 @@ def main() -> None:
                     f"±2={val_metrics['within_2']:.2%} "
                     f"±3={val_metrics['within_3']:.2%}"
                 )
+                for vid, err in video_errors.items():
+                    if err > args.bad_threshold:
+                        bad_counts[vid] = bad_counts.get(vid, 0) + 1
+                if bad_counts:
+                    top_bad = sorted(bad_counts.items(), key=lambda x: (-x[1], x[0]))[:5]
+                    summary = ", ".join(
+                        f"{vid}:{count} (err={video_errors.get(vid, float('nan')):.2f})" for vid, count in top_bad
+                    )
+                    print(f"  Bad trackers (>{args.bad_threshold}): {summary}")
                 if mean_err < best_score:
                     best_score = mean_err
                     torch.save(model.state_dict(), args.best_path)
@@ -476,13 +491,8 @@ def main() -> None:
         torch.save(model.state_dict(), args.best_path)
         print(f"No validation improvements tracked; saved current model as best to {args.best_path}")
 
-    # Optional legacy save path.
-    if args.save_path:
-        torch.save(model.state_dict(), args.save_path)
-        print(f"Saved model to {args.save_path}")
-
     if test_ids:
-        test_metrics = evaluate_videos(
+        test_metrics, _ = evaluate_videos(
             model,
             dataset_root,
             test_ids,

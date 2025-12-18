@@ -16,7 +16,7 @@ from PIL import Image
 
 from train_cnn_tcn import ReleaseModel, default_transform, window_start_indices
 
-RELEASE_THRESHOLD = 0.8
+RELEASE_THRESHOLD = 1.0     # new default threshold - since the model is well calibrated
 RELEASE_MIN_FRAMES = 5
 
 

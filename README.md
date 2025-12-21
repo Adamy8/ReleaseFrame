@@ -3,9 +3,11 @@
 Frame-by-frame baseball pitch release detection with a 2D CNN baseline and a CNN-TCN sequence model.
 
 ## Quick start
-- ```bash
+- Clone the repo:
+```bash
 git clone https://github.com/Adamy8/ReleaseFrame.git
 cd ReleaseFrame
+```
 - Python 3.10+ recommended. Create a virtualenv if desired.
 - Install deps: `pip install -r requirements.txt`.
 - Download the `annotations/` folder (JSON labels + raw clips) from the project Google Drive into the repo root.
@@ -18,10 +20,10 @@ cd ReleaseFrame
    Output defaults to `dataset/` with subfolders for images and labels.
 
 ## Train
-### 2D CNN baseline
+#### 2D CNN baseline
 - Train: `python train_cnn.py --dataset dataset --epochs 5 --batch-size 32 --lr 1e-4`
 
-### CNN-TCN
+#### CNN-TCN
 - (Optional) create fresh splits if you do not already have `splits/`:  
   `python train_cnn_tcn.py --dataset dataset --make-splits --seed 42`
 - Train: `python train_cnn_tcn.py --dataset dataset --epochs 25 --batch-size 4 --device cuda`

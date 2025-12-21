@@ -47,7 +47,7 @@ def write_markdown(
         f.write("# Release frame accuracy\n\n")
         f.write(f"- Model: `{model_path}`\n")
         f.write(f"- Dataset: `{dataset_path}`\n")
-        f.write("- Release frame rule: first frame with probability >= 1.0; fallback to max probability.\n\n")
+        f.write("- Release frame rule: first frame with probability >= 0.99; fallback to max probability.\n\n")
         f.write("| video | annotated | predicted | abs diff |\n")
         f.write("| --- | --- | --- | --- |\n")
         for video_id, annotated, predicted, diff in rows:

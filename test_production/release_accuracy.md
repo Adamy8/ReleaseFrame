@@ -2,7 +2,7 @@
 
 - Model: `best_model.pth`
 - Dataset: `test_production`
-- Release frame rule: first frame with probability >= 1.0; fallback to max probability.
+- Release frame rule: first frame with probability >= 0.99; fallback to max probability.
 
 | video | annotated | predicted | abs diff |
 | --- | --- | --- | --- |

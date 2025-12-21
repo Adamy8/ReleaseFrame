@@ -108,6 +108,9 @@ def main() -> None:
         abs_errors.append(diff)
         if predicted_idx == annotated_idx:
             matches += 1
+            print(f"Match for {video_id} at frame {annotated_idx}")
+        else:
+            print(f"Mismatch for {video_id}: annotated {annotated_idx}, predicted {predicted_idx}")
 
     total = len(rows)
     accuracy_pct = 100.0 * matches / total if total else 0.0

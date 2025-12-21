@@ -2,17 +2,17 @@
 
 - Model: `best_model.pth`
 - Dataset: `test_production`
-- Release frame rule: first frame with probability >= 0.99; fallback to max probability.
+- Release frame rule: first frame with probability >= 0.85; fallback to max probability.
 
 | video | annotated | predicted | abs diff |
 | --- | --- | --- | --- |
-| L9T1LT9FRXAK | 152 | 153 | 1 |
+| L9T1LT9FRXAK | 152 | 152 | 0 |
 | LBNZQRD1NUF1 | 126 | 126 | 0 |
 | LDF26OW4JWLR | 92 | 92 | 0 |
 | LFLCKL4SY9W6 | 141 | 141 | 0 |
 | LPXVP3IWKNTV | 101 | 101 | 0 |
-| LPZZS5GAFAXZ | 145 | 146 | 1 |
-| LTAHTDNCLCSF | 105 | 106 | 1 |
+| LPZZS5GAFAXZ | 145 | 145 | 0 |
+| LTAHTDNCLCSF | 105 | 105 | 0 |
 | LU1FFMT1F49S | 126 | 126 | 0 |
 | LVQV6JWXFXGH | 126 | 127 | 1 |
 | LYMZC15DN2YN | 135 | 135 | 0 |
@@ -21,10 +21,10 @@
 | MJZ0EZP3LDJ7 | 86 | 86 | 0 |
 | MK40WZVWHVN2 | 131 | 131 | 0 |
 | MK83M5DI0YQD | 96 | 96 | 0 |
-| MMNQZ3FTLL7R | 138 | 139 | 1 |
-| MQ2SXXHQKPOU | 87 | 87 | 0 |
+| MMNQZ3FTLL7R | 138 | 138 | 0 |
+| MQ2SXXHQKPOU | 87 | 86 | 1 |
 | MRAQXYAM7DR7 | 146 | 147 | 1 |
-| MRY1ZRSHOC3X | 87 | 87 | 0 |
+| MRY1ZRSHOC3X | 87 | 86 | 1 |
 | MVIJ9B4W99TF | 125 | 125 | 0 |
 | MX2HJKWK1ZND | 139 | 139 | 0 |
 | N0TJLBWX6YQX | 128 | 128 | 0 |
@@ -63,15 +63,15 @@
 | Q9ENZFZLC98K | 140 | 140 | 0 |
 | QAIQBI9K16TH | 130 | 130 | 0 |
 | QFBXITSV51VK | 135 | 135 | 0 |
-| QIUZ2XTXQEX5 | 92 | 92 | 0 |
+| QIUZ2XTXQEX5 | 92 | 91 | 1 |
 | QJCWVCER2ZAE | 94 | 94 | 0 |
-| QKTBX3AXQE74 | 126 | 128 | 2 |
+| QKTBX3AXQE74 | 126 | 126 | 0 |
 | QN5SXRKISGOF | 99 | 99 | 0 |
 | QPFIGUTMFNW9 | 145 | 145 | 0 |
 | QQE9K8R05LHV | 130 | 131 | 1 |
 | QU5UT9L7WKGI | 142 | 142 | 0 |
 | QUYLJ3FDAJFM | 155 | 155 | 0 |
-| QZVJM9IDPQGX | 128 | 129 | 1 |
+| QZVJM9IDPQGX | 128 | 128 | 0 |
 | R386CHVYH1AL | 148 | 148 | 0 |
 | R70IU6UX0RKL | 107 | 107 | 0 |
 | RJDYPQRLHKJ5 | 83 | 83 | 0 |
@@ -82,7 +82,7 @@
 | RS3W8NPD047U | 131 | 131 | 0 |
 | RV64XQRKJB72 | 127 | 127 | 0 |
 | RWIX7EEHO219 | 149 | 149 | 0 |
-| S4B9ZCAP65H2 | 154 | 155 | 1 |
+| S4B9ZCAP65H2 | 154 | 154 | 0 |
 | S5EDLSNCZALB | 107 | 107 | 0 |
 | S8CR0QVS6058 | 91 | 91 | 0 |
 | S99I19O0MJJI | 142 | 142 | 0 |
@@ -96,15 +96,15 @@
 | SNC9QA3ES51G | 96 | 96 | 0 |
 | SU87F46RY3KP | 104 | 104 | 0 |
 | SUEJRSDSVB7J | 98 | 98 | 0 |
-| SX7EXO8YMVKI | 145 | 146 | 1 |
+| SX7EXO8YMVKI | 145 | 145 | 0 |
 | T02BUH08OV3D | 132 | 132 | 0 |
 | T1GWZQ3S458E | 96 | 96 | 0 |
 | T2ZFCKWFY6FC | 148 | 149 | 1 |
 | T40GNGC9ZECJ | 90 | 90 | 0 |
-| T4P1MCYTQIW6 | 92 | 93 | 1 |
+| T4P1MCYTQIW6 | 92 | 92 | 0 |
 | T9ASN4SRZO9T | 143 | 143 | 0 |
 | T9KTTU70S9DD | 104 | 104 | 0 |
-| TAKINWF1MSMH | 97 | 98 | 1 |
+| TAKINWF1MSMH | 97 | 97 | 0 |
 | TECA3KTNG12R | 98 | 98 | 0 |
 | TJWWYVL3NHUM | 141 | 141 | 0 |
 | TK0C3IB11PLP | 140 | 140 | 0 |
@@ -124,7 +124,7 @@
 | UK7MAD2G6M33 | 83 | 83 | 0 |
 | UMYP9PQJIWEM | 82 | 82 | 0 |
 | UPP4EY8QES5W | 139 | 139 | 0 |
-| UQ0A7KTE07MY | 134 | 137 | 3 |
+| UQ0A7KTE07MY | 134 | 135 | 1 |
 | UQOANGW9KY3L | 139 | 139 | 0 |
 | UUJKTIPTJDBB | 151 | 151 | 0 |
 | UX9613EAV9X5 | 127 | 127 | 0 |
@@ -135,7 +135,7 @@
 | VCD5DV9JQ0HJ | 94 | 94 | 0 |
 | VE7MSWR4ZPDM | 153 | 153 | 0 |
 | VEHVBVGWPKQ8 | 134 | 134 | 0 |
-| VEO9YJ0O920A | 135 | 135 | 0 |
+| VEO9YJ0O920A | 135 | 134 | 1 |
 | VI9HQS640TTO | 141 | 141 | 0 |
 | VOA84OV3URUR | 94 | 94 | 0 |
 | VPKK1KGVIDCW | 147 | 147 | 0 |
@@ -167,7 +167,7 @@
 | X81T4GSP3IKJ | 83 | 83 | 0 |
 | XA2KKC8XNVE1 | 152 | 153 | 1 |
 | XE41CBGT1NBY | 139 | 139 | 0 |
-| XEP1BZZGQFDK | 145 | 146 | 1 |
+| XEP1BZZGQFDK | 145 | 145 | 0 |
 | XEQPCTJ0P1X1 | 137 | 137 | 0 |
 | XIE5U54949WP | 97 | 97 | 0 |
 | XN80O6MXVAPF | 108 | 108 | 0 |
@@ -199,6 +199,6 @@
 | ZW9YMXEDPEKS | 150 | 150 | 0 |
 | ZYYNC4REDFQZ | 98 | 98 | 0 |
 
-Overall exact-match accuracy: 86.98%
+Overall exact-match accuracy: 90.62%
 
-Mean absolute frame error: 0.15
+Mean absolute frame error: 0.10

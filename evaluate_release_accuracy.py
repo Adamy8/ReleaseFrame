@@ -21,7 +21,7 @@ def find_release_frame_first_one(probs: Iterable[float]) -> int:
     Falls back to the max-probability frame if no value reaches 1.0.
     """
     for idx, p in enumerate(probs):
-        if p >= 0.99:           # change to 0.99 to avoid floating point issues
+        if p >= 0.85:         # (all value betwee 0.85-0.95 are reasonable)
             return idx
     arr = np.asarray(list(probs), dtype=np.float32)
     if arr.size == 0:
@@ -47,7 +47,7 @@ def write_markdown(
         f.write("# Release frame accuracy\n\n")
         f.write(f"- Model: `{model_path}`\n")
         f.write(f"- Dataset: `{dataset_path}`\n")
-        f.write("- Release frame rule: first frame with probability >= 0.99; fallback to max probability.\n\n")
+        f.write("- Release frame rule: first frame with probability >= 0.85; fallback to max probability.\n\n")
         f.write("| video | annotated | predicted | abs diff |\n")
         f.write("| --- | --- | --- | --- |\n")
         for video_id, annotated, predicted, diff in rows:

@@ -1,22 +1,35 @@
 # ReleaseFrame
 
-## Run this project
-### 2D CNN:
-  (0. use python venv, pip install -r requirements.txt)
-  1. Download the annotations/ folder from Google drive.
-  2. python processdata.py rename     # to change name into readable video###.mp4
-  3. python processdata.py build-dataset    # to put data into the structure for training
-  4. python train_cnn.py --dataset dataset --epochs 5 --batch-size 32 --lr 1e-4      # train the 2D CNN
-  5. python predit_release_2DCNN.py --video path/to/input.mp4    # to use the model
+Frame-by-frame baseball pitch release detection with a 2D CNN baseline and a CNN-TCN sequence model.
+
+## Quick start
+- ```bash
+git clone https://github.com/Adamy8/ReleaseFrame.git
+cd ReleaseFrame
+- Python 3.10+ recommended. Create a virtualenv if desired.
+- Install deps: `pip install -r requirements.txt`.
+- Download the `annotations/` folder (JSON labels + raw clips) from the project Google Drive into the repo root.
+
+## Prepare data
+1) Rename clips to sequential names that match the annotations:  
+   `python processdata.py rename`
+2) Build the training dataset structure (frames, labels, metadata):  
+   `python processdata.py build-dataset`  
+   Output defaults to `dataset/` with subfolders for images and labels.
+
+## Train
+### 2D CNN baseline
+- Train: `python train_cnn.py --dataset dataset --epochs 5 --batch-size 32 --lr 1e-4`
+
 ### CNN-TCN
-  - same step 0-3
-  \# to split dataset into random train/val/test, optional if you have splits/ already
-  4. python train_cnn_tcn.py --dataset dataset --make-splits --seed 42     
-  \# train CNN-TCN, use nohup for no interrupting
-  5. python train_cnn_tcn.py --dataset dataset --epochs 25 --batch-size 4 --device cuda
-  6. python predict_release_tcn.py --video dodgers.mp4 --model best_model.pth --min-frames 10
+- (Optional) create fresh splits if you do not already have `splits/`:  
+  `python train_cnn_tcn.py --dataset dataset --make-splits --seed 42`
+- Train: `python train_cnn_tcn.py --dataset dataset --epochs 25 --batch-size 4 --device cuda`
+
+## Inference
+- 2D CNN: `python predict_release_2Dcnn.py --video path/to/input.mp4 --model best_model.pth`
+- CNN-TCN: `python predict_release_tcn.py --video path/to/input.mp4 --model best_model.pth --min-frames 10`
 
 ## Samples
-- `annotated_dodgers.mp4`: sample 2D CNN annotated output video.
-- `annotated_dodgers_tcn.mp4`: sample CNN-TCN prediction
-
+- `annotated_dodgers.mp4`: 2D CNN annotated output.
+- `annotated_dodgers_tcn.mp4`: CNN-TCN prediction preview.

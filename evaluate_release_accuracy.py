@@ -21,7 +21,7 @@ def find_release_frame_first_one(probs: Iterable[float]) -> int:
     Falls back to the max-probability frame if no value reaches 1.0.
     """
     for idx, p in enumerate(probs):
-        if p >= 1.0:
+        if p >= 0.99:           # change to 0.99 to avoid floating point issues
             return idx
     arr = np.asarray(list(probs), dtype=np.float32)
     if arr.size == 0:
